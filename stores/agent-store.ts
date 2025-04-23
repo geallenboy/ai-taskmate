@@ -14,6 +14,7 @@ interface AgentStore {
   evaluation: EvaluationResult | null
 
   // 操作
+  initializeFromStorage: () => void
   setUserGoal: (goal: string) => void
   updateAgentStatus: (id: string, status: AgentStatus, result?: string) => void
   setFinalResult: (result: string) => void
@@ -31,6 +32,8 @@ const initialAgents: Agent[] = [
     description: "将你的目标分解为可管理的任务",
     status: "pending",
     result: "",
+    isProcessing: false,
+    isComplete: false,
   },
   {
     id: "searcher",
@@ -38,6 +41,8 @@ const initialAgents: Agent[] = [
     description: "为你的任务收集相关信息",
     status: "pending",
     result: "",
+    isProcessing: false,
+    isComplete: false,
   },
   {
     id: "reasoner",
@@ -45,6 +50,8 @@ const initialAgents: Agent[] = [
     description: "处理和分析收集到的信息",
     status: "pending",
     result: "",
+    isProcessing: false,
+    isComplete: false,
   },
   {
     id: "writer",
@@ -52,6 +59,8 @@ const initialAgents: Agent[] = [
     description: "基于分析创建结构化回应",
     status: "pending",
     result: "",
+    isProcessing: false,
+    isComplete: false,
   },
 ]
 
@@ -65,7 +74,17 @@ export const useAgentStore = create<AgentStore>()(
       error: null,
       taskHistory: [],
       evaluation: null,
-
+      // 添加初始化方法
+      initializeFromStorage: () => {
+        // 从 localStorage 手动获取数据
+        const storedData = localStorage.getItem('task-history-storage')
+        if (storedData) {
+          const parsedData = JSON.parse(storedData)
+          if (parsedData.state && parsedData.state.taskHistory) {
+            set({ taskHistory: parsedData.state.taskHistory })
+          }
+        }
+      },
       setUserGoal: (goal) =>
         set({
           userGoal: goal,

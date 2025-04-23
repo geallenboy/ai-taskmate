@@ -1,6 +1,8 @@
 export type AgentStatus = "pending" | "processing" | "completed" | "error"
 
 export interface Agent {
+  isProcessing: any
+  isComplete: any
   id: string
   name: string
   description: string
