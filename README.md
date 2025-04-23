@@ -58,7 +58,7 @@ AI TaskMate 使用 LangChain 和 OpenAI 的大语言模型，通过多代理协�
 
 ## 🎬 演示
 
-![video](./public/video.mp4)
+![video](./public/video.gif)
 
 
 
