@@ -1,14 +1,22 @@
-import { generateText } from "ai"
-import { openai } from "@ai-sdk/openai"
+import { createChatOpenAI, createChain, runChain } from "../langchain-config"
 
 export async function runPlannerAgent(userGoal: string): Promise<string> {
-  const { text } = await generateText({
-    model: openai("gpt-4o"),
-    system: `You are a Planning Agent that breaks down user goals into clear, actionable tasks. 
-    Your job is to analyze the user's goal and create a structured plan with specific steps.
-    Format your response as a numbered list of tasks with brief explanations.`,
-    prompt: `Break down this goal into a clear, actionable plan: ${userGoal}`,
-  })
+  const model = createChatOpenAI(0.7)
 
-  return text
+  const template = `你是一个规划Agent，负责将用户目标分解为清晰、可操作的任务。
+  你的工作是分析用户的目标并创建一个结构化的计划，包含具体步骤。
+  请将你的回答格式化为带有简短解释的编号任务列表。
+  
+  用户目标: {userGoal}
+  
+  请提供详细的任务分解计划:`
+
+  try {
+    const chain = await createChain(template, model, "planner-agent")
+    const result = await runChain(chain, { userGoal })
+    return result
+  } catch (error) {
+    console.error("规划代理错误:", error)
+    throw new Error("规划代理执行失败: " + (error instanceof Error ? error.message : String(error)))
+  }
 }

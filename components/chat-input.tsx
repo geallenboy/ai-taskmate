@@ -17,24 +17,24 @@ export default function ChatInput() {
     e.preventDefault()
     if (!input.trim()) return
 
-    // Save the user goal to the store
+    // 保存用户目标到存储
     setUserGoal(input)
 
-    // Navigate to the process page
+    // 导航到处理页面
     router.push("/process")
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <Textarea
-        placeholder="e.g., Help me create a study plan for learning JavaScript"
+        placeholder="例如：帮我制定一个学习JavaScript的计划"
         value={input}
         onChange={(e) => setInput(e.target.value)}
         className="min-h-[120px] resize-none"
       />
       <div className="flex justify-end">
         <Button type="submit" disabled={!input.trim()}>
-          Start Task
+          开始任务
         </Button>
       </div>
     </form>

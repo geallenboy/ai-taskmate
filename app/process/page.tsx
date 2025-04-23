@@ -20,7 +20,7 @@ export default function ProcessPage() {
       return
     }
 
-    // Start the agent flow when the component mounts
+    // 组件挂载时启动代理流程
     startAgentFlow()
   }, [userGoal, router, startAgentFlow])
 
@@ -29,22 +29,22 @@ export default function ProcessPage() {
   }
 
   if (!userGoal) {
-    return null // Will redirect to home
+    return null // 将重定向到首页
   }
 
   return (
     <div className="container max-w-4xl py-12">
       <Card>
         <CardHeader>
-          <CardTitle>Processing Your Task</CardTitle>
-          <CardDescription>Our AI agents are working on your goal: {userGoal}</CardDescription>
+          <CardTitle>正在处理你的任务</CardTitle>
+          <CardDescription>我们的AI代理正在处理你的目标：{userGoal}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-8">
           {error ? (
             <div className="rounded-lg bg-red-50 p-4 text-red-800">
               <div className="flex items-center">
                 <AlertCircle className="mr-2 h-5 w-5" />
-                <p>An error occurred: {error}</p>
+                <p>发生错误：{error}</p>
               </div>
             </div>
           ) : (
@@ -59,17 +59,17 @@ export default function ProcessPage() {
                 {isProcessing ? (
                   <Button disabled>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processing...
+                    处理中...
                   </Button>
                 ) : isComplete ? (
                   <Button onClick={handleViewResults}>
                     <CheckCircle className="mr-2 h-4 w-4" />
-                    View Results
+                    查看结果
                   </Button>
                 ) : (
                   <Button disabled>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Starting...
+                    启动中...
                   </Button>
                 )}
               </div>

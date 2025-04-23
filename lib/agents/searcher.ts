@@ -1,16 +1,24 @@
-import { generateText } from "ai"
-import { openai } from "@ai-sdk/openai"
+import { createChatOpenAI, createChain, runChain } from "../langchain-config"
 
 export async function runSearchAgent(userGoal: string, planResult: string): Promise<string> {
-  const { text } = await generateText({
-    model: openai("gpt-4o"),
-    system: `You are a Search Agent that collects relevant information for tasks.
-    Your job is to identify key information needs based on the user's goal and plan,
-    and provide the most relevant information.
-    Format your response as sections with headings for different information categories.`,
-    prompt: `Based on this goal: "${userGoal}" and this plan: "${planResult}", 
-    what are the key pieces of information needed? Provide relevant information for each task.`,
-  })
+  const model = createChatOpenAI(0.7)
 
-  return text
+  const template = `你是一个搜索Agent，负责收集任务相关的信息。
+  你的工作是根据用户的目标和计划，识别关键信息需求并提供最相关的信息。
+  请将你的回答格式化为不同信息类别的章节，并带有标题。
+  
+  用户目标: {userGoal}
+  
+  计划: {planResult}
+  
+  请提供每个任务所需的关键信息:`
+
+  try {
+    const chain = await createChain(template, model, "search-agent")
+    const result = await runChain(chain, { userGoal, planResult })
+    return result
+  } catch (error) {
+    console.error("搜索代理错误:", error)
+    throw new Error("搜索代理执行失败: " + (error instanceof Error ? error.message : String(error)))
+  }
 }

@@ -60,9 +60,9 @@
     "zod": "^3.24.1",
     "immer": "latest",
     "use-sync-external-store": "latest",
+    "@langchain/core": "latest",
     "zustand": "latest",
-    "ai": "latest",
-    "@ai-sdk/openai": "latest"
+    "@langchain/openai": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",
