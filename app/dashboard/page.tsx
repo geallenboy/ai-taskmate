@@ -11,7 +11,7 @@ import { getEnv } from "@/lib/env"
 
 // 获取环境配置
 const env = getEnv()
-
+console.log("获取环境变量配置...", process.env.OPENAI_API_KEY)
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState({

@@ -1,8 +1,14 @@
+"use client"
+import { getEnv } from "@/lib/env"
+
+// 获取环境配置
+const env = getEnv()
+
 // 直接使用fetch调用OpenAI API的备用方案
 // 如果LangChain出现问题，可以使用此方法
 
 export async function callOpenAI(prompt: string, systemMessage = "你是一个有用的AI助手", temperature = 0.7) {
-  const apiKey = process.env.OPENAI_API_KEY
+  const apiKey = env.OPENAI_API_KEY
 
   if (!apiKey) {
     throw new Error("缺少OPENAI_API_KEY环境变量")
