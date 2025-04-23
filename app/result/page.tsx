@@ -84,7 +84,7 @@ export default function ResultPage() {
       animate="visible"
       variants={fadeIn}
     >
-      <div className="container max-w-4xl py-8 md:py-12">
+      <div className="w-full py-8 md:py-12">
         <div className="mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="bg-indigo-500/20 p-2 rounded-full">
