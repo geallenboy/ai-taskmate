@@ -25,9 +25,9 @@ export async function evaluateAgentResponse(userGoal: string, agentResponse: str
   const evaluationPrompt = PromptTemplate.fromTemplate(`
     你是一个评估AI回应质量的专家。请评估以下AI回应是否满足用户目标。
     
-    用户目标: {userGoal}
+    用户目标: {goal}
     
-    AI回应: {agentResponse}
+    AI回应: {response}
     
     请从以下几个方面评分（1-10分）：
     1. 相关性：回应与用户目标的相关程度
@@ -35,15 +35,15 @@ export async function evaluateAgentResponse(userGoal: string, agentResponse: str
     3. 可操作性：用户能否根据回应采取行动
     4. 清晰度：回应的结构和表达是否清晰
     
-    请以JSON格式返回评估结果，格式如下：
-    {
-      "relevance": 数字,
-      "completeness": 数字,
-      "actionability": 数字,
-      "clarity": 数字,
-      "overallScore": 数字,
+    请以纯JSON格式返回评估结果，不要包含任何其他文本，不要使用Markdown格式，不要使用代码块，直接返回原始JSON：
+    {{
+      "relevance": 1-10之间的数字,
+      "completeness": 1-10之间的数字,
+      "actionability": 1-10之间的数字,
+      "clarity": 1-10之间的数字,
+      "overallScore": 1-10之间的数字,
       "suggestions": "改进建议"
-    }
+    }}
   `)
 
   const outputParser = new StringOutputParser()
@@ -63,15 +63,45 @@ export async function evaluateAgentResponse(userGoal: string, agentResponse: str
     })
   }
 
+  function extractAndParseJSON(text: string): EvaluationResult {
+    try {
+      return JSON.parse(text) as EvaluationResult;
+    } catch (e) {
+      const jsonRegex = /{[\s\S]*?}/;
+      const match = text.match(jsonRegex);
+
+      if (match) {
+        try {
+          return JSON.parse(match[0]) as EvaluationResult;
+        } catch (e2) {
+          return defaultEvaluation();
+        }
+      }
+
+      return defaultEvaluation();
+    }
+  }
+
+  function defaultEvaluation(): EvaluationResult {
+    return {
+      relevance: 5,
+      completeness: 5,
+      actionability: 5,
+      clarity: 5,
+      overallScore: 5,
+      suggestions: "无法解析评估结果，使用默认值"
+    };
+  }
+
   try {
     const result = await chain.invoke({
-      userGoal,
-      agentResponse,
+      goal: userGoal,
+      response: agentResponse,
     })
 
-    return JSON.parse(result) as EvaluationResult
+    return extractAndParseJSON(result);
   } catch (error) {
-    console.error("解析评估结果失败:", error)
-    throw new Error("评估结果格式错误: " + (error instanceof Error ? error.message : String(error)))
+    console.error("评估过程失败:", error);
+    return defaultEvaluation();
   }
 }

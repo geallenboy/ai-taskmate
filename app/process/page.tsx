@@ -13,6 +13,11 @@ export default function ProcessPage() {
   const router = useRouter()
   const { userGoal, agents, isComplete, error } = useAgentStore()
   const { startAgentFlow, isProcessing } = useAgentFlow()
+  
+  // 添加调试输出
+  useEffect(() => {
+    console.log("页面状态:", { isProcessing, isComplete, error });
+  }, [isProcessing, isComplete, error]);
 
   useEffect(() => {
     if (!userGoal) {
@@ -20,9 +25,14 @@ export default function ProcessPage() {
       return
     }
 
-    // 组件挂载时启动代理流程
-    startAgentFlow()
-  }, [userGoal, router, startAgentFlow])
+    // 只有当没有错误、没有完成且不在处理中时才启动流程
+    if (!isComplete && !error && !isProcessing) {
+      console.log("启动代理流程 - 状态检查通过");
+      startAgentFlow();
+    } else {
+      console.log("跳过启动代理流程", { isComplete, error, isProcessing });
+    }
+  }, [userGoal, router, startAgentFlow, isComplete, error, isProcessing]);
 
   const handleViewResults = () => {
     router.push("/result")
